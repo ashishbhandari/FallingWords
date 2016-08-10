@@ -1,0 +1,9 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="word_icon_size">24dp</dimen>
+    <dimen name="word_icon_horizontal_padding">24dp</dimen> <!-- center 24dp in @keyline_2 -->
+
+</resources>

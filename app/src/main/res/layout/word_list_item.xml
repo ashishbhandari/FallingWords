@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/touch_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp">
+
+        <com.fallingwords.util.RoundedView
+            android:id="@+id/icon"
+            android:layout_width="@dimen/word_icon_size"
+            android:layout_height="@dimen/word_icon_size"
+            android:contentDescription="@null" />
+    </LinearLayout>
+
+</LinearLayout>

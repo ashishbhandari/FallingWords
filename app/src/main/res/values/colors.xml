@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+
+    <color name="word_item_icon_default">#fafafa</color>
+    <color name="word_item_icon_progressing">#14d9fc</color>
+    <color name="word_item_icon_correct">#54cc24</color>
+    <color name="word_item_icon_wrong">#ff0000</color>
+
+
+    <color name="white">#fafafa</color>
+    <color name="white_pressed">#f1f1f1</color>
+    <color name="half_black">#808080</color>
+    <color name="black_semi_transparent">#B2000000</color>
+
+
+</resources>
