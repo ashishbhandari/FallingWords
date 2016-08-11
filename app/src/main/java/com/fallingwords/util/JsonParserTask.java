@@ -1,10 +1,11 @@
-package com.fallingwords;
+package com.fallingwords.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.fallingwords.util.JSONHandler;
+import com.fallingwords.R;
+import com.fallingwords.model.WordItem;
 import com.google.gson.Gson;
 
 import java.io.IOException;

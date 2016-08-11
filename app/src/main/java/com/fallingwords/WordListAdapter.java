@@ -10,6 +10,7 @@ import android.widget.AbsListView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.fallingwords.model.WordItem;
 import com.fallingwords.util.RoundedView;
 
 import java.util.ArrayList;

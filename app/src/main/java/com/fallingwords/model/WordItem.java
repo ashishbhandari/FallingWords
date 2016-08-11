@@ -1,4 +1,4 @@
-package com.fallingwords;
+package com.fallingwords.model;
 
 /**
  * Created by Ashish Bhandari on 07-Aug-16.

@@ -1,30 +1,55 @@
 package com.fallingwords;
 
-import android.content.Context;
-import android.test.InstrumentationTestCase;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
+import com.fallingwords.model.WordItem;
+import com.fallingwords.util.JsonParserTask;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Created by b_ashish on 11-Aug-16.
  */
-public class JsonParserTaskTest extends InstrumentationTestCase {
+@RunWith(AndroidJUnit4.class)
+public class JsonParserTaskTest {
 
-    public void testJsonParser() throws Throwable{
+    private static final String TAG = JsonParserTaskTest.class.getSimpleName();
 
-        final Context context = getInstrumentation().getTargetContext();
-        final CountDownLatch signal = new CountDownLatch(1);
-//        final NetworkTasks networkTasks = new NetworkTasks(context, new GetMediaListener(signal));
-//
-//        runTestOnUiThread(new Runnable() {
-//            public void run() {
-//                Media media = new Media();
-//                media.setId("179");
-//                networkTasks.getMedia(media);
-//            }
-//        });
-//
-//        signal.await(30, TimeUnit.SECONDS);
+    @Rule
+    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
+
+    @Test
+    public void testJsonParserTask() throws Exception {
+
+
+        final Object syncObject = new Object();
+
+        final JsonParserTask<WordItem> mJsonParserTask = new JsonParserTask<>(mActivityRule.getActivity());
+        mJsonParserTask.setJsonParserListener(new JsonParserTask.OnDataListener() {
+            @Override
+            public void onDecode(JsonParserTask task, List output) {
+
+                Log.v(TAG, "onHandleResponseCalled in thread " + Thread.currentThread().getId());
+
+                assertThat(output, notNullValue());
+
+                synchronized (syncObject) {
+                    syncObject.notify();
+                }
+            }
+        }).overlay();
+
+        synchronized (syncObject) {
+            syncObject.wait();
+        }
+
 
     }
 

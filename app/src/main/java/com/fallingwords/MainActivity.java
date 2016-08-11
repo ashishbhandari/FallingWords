@@ -3,9 +3,7 @@ package com.fallingwords;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,7 +15,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import android.widget.Toast;
+import com.fallingwords.model.WordItem;
 import com.fallingwords.util.AnimationListenerAdapter;
+import com.fallingwords.util.JsonParserTask;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import java.util.List;
@@ -36,6 +36,8 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
     protected static final int WORD_ITEM_RESULT_STATE = 2;
 
     private static final int DEFAULT_INDEX = 0;
+
+    private static final int FALLING_WORD_DURATION = 7000;
 
     private boolean mGameStarted = false;
 
@@ -139,9 +141,6 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
         }
         mCurrentPosition = position;
 
-//        DescriptionFragment descriptionFragment = (DescriptionFragment) getFragmentManager()
-//                .findFragmentById(R.id.description_fragment);
-
         if (mWordItems.get(position).isAttempted) {
             // show resulted color either right or wrong
             // and show the result of this question on result screen
@@ -149,7 +148,7 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
             showDescriptionScreenStatus(WORD_ITEM_RESULT_STATE);
 
         } else {
-            //refresh list adapter and make it active question going on
+            //refresh word list adapter and make it active question going on
 
             // show animation on detail screen and after completion make it attempted true
             // and isGoingOn false and refresh list view
@@ -195,8 +194,8 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
             WordItem wordItem = mWordItems.get(mCurrentPosition);
 
             ((TextView) view.findViewById(R.id.ques_word)).setText(wordItem.text_eng);
-            ((TextView) view.findViewById(R.id.option_present)).setText("Spanish Conversion : " + wordItem.fallingTranslationWord);
-            ((TextView) view.findViewById(R.id.actual_answer)).setText("\nCorrect answer is : " + wordItem.text_spa);
+            ((TextView) view.findViewById(R.id.option_present)).setText("Falling word : " + wordItem.fallingTranslationWord);
+            ((TextView) view.findViewById(R.id.actual_answer)).setText("\nCorrect Spanish conversion is : " + wordItem.text_spa);
             ((TextView) view.findViewById(R.id.status_answer)).setText("Your answer is " + (wordItem.isCorrect ? "Correct" : "Wrong"));
 
             populateScoreCard();
@@ -253,8 +252,7 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
 
     public void calculateResultStatus() {
         /**
-         * Case 1: When question will be end without getting any input from user,
-         * if no Input will be press by user userOptedAnswer should be null so handle it accordingly
+         * Case 1: When question will be end without getting any input from user
          */
         Boolean userOptedAnswer = mWordItems.get(mCurrentPosition).userOptedAnswer;
 
@@ -327,10 +325,13 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
     }
 
     private void startFallingWordAnimation(final int position) {
-        int yValue = descriptionFragment.getView().getBottom() - mFallingWordTranslation.getHeight();
+
+        int yValueStart = 0;
+        int yValueEnd = descriptionFragment.getView().getBottom() - mFallingWordTranslation.getHeight();
 
         stopFallingAnimation();
-        objectFallingAnimator = ObjectAnimator.ofFloat(mFallingWordTranslation, View.TRANSLATION_Y, 0, yValue).setDuration(7000);
+
+        objectFallingAnimator = ObjectAnimator.ofFloat(mFallingWordTranslation, View.TRANSLATION_Y, yValueStart, yValueEnd).setDuration(FALLING_WORD_DURATION);
 
         objectFallingAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -375,8 +376,9 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mJsonParserTask != null && mJsonParserTask.getStatus() != AsyncTask.Status.FINISHED)
+        if (mJsonParserTask != null && mJsonParserTask.getStatus() != AsyncTask.Status.FINISHED) {
             mJsonParserTask.cancel(true);
+        }
 
     }
 }
