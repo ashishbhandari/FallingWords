@@ -12,6 +12,8 @@ public class WordGame implements WordPick {
     @Override
     public void reset() {
         // need to reset the game here
+        session = new WordSession();
+
     }
 
     @Override

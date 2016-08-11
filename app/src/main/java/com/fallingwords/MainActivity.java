@@ -78,7 +78,7 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
             public void onDecode(JsonParserTask task, List output) {
                 Log.e(TAG, "result");
                 mWordItems = output;
-
+                WordGameHolder.getInstance().reset();
                 if (mWordItems != null && mWordItems.size() > 0) {
                     WordSession session = WordGameHolder.getInstance().getSession();
                     session.setTotalQuestions(mWordItems.size());
