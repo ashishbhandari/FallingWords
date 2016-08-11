@@ -38,20 +38,12 @@
             android:baselineAligned="false"
             android:orientation="horizontal">
 
-        <FrameLayout
-                android:id="@+id/list_container"
+        <fragment
+                android:id="@+id/word_list_fragment"
+                android:name="com.fallingwords.WordListFragment"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.5">
-
-        </FrameLayout>
-
-        <!--<fragment-->
-                <!--android:id="@+id/word_list_fragment"-->
-                <!--android:name="com.fallingwords.WordListFragment"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="0.5"/>-->
+                android:layout_weight="0.5"/>
 
         <fragment
                 android:id="@+id/description_fragment"

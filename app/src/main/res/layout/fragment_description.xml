@@ -37,7 +37,7 @@
             android:id="@+id/game_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible">
+            android:visibility="gone">
 
         <TextView
                 android:id="@+id/falling_word_trans"
@@ -101,7 +101,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="invisible">
+            android:visibility="gone">
 
         <TextView
                 android:id="@+id/ques_word"

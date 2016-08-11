@@ -40,6 +40,14 @@ public class WordListFragment extends ListFragment {
         return mRoot;
     }
 
+//    @Override
+//    public void onActivityCreated(Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        if (getActivity() instanceof Listener) {
+//            ((Listener) getActivity()).onFragmentViewCreated(this);
+//        }
+//    }
+
     public void setContentDescription(String desc) {
         mContentDescription = desc;
         if (mRoot != null) {

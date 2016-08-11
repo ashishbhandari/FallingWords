@@ -29,8 +29,6 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    public final static String WORD_LIST_TAG = "Word_List";
-
     protected static final int WORD_ITEM_INIT_STATE = 0;
 
     protected static final int WORD_ITEM_PROGRESS_STATE = 1;
@@ -69,8 +67,6 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
         scoreCard = (TextView) findViewById(R.id.score_card_label);
         gameStatus = (TextView) findViewById(R.id.game_over_status);
 
-        loadWordTranslator();
-
     }
 
     private void loadWordTranslator() {
@@ -85,21 +81,22 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
                     WordSession session = WordGameHolder.getInstance().getSession();
                     session.setTotalQuestions(mWordItems.size());
 
-                    WordListFragment frag = new WordListFragment();
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.add(R.id.list_container, frag);
-//                    transaction.addToBackStack(WORD_LIST_TAG);
-                    transaction.commit();
-
-                    mWordListAdapter = new WordListAdapter(MainActivity.this);
-                    mWordListAdapter.updateItems(mWordItems);
+                    populateWordListAdapter();
                     populateScoreCard();
+
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.no_data_available), Toast.LENGTH_LONG).show();
                     finish();
                 }
             }
         }).overlay();
+    }
+
+    private void populateWordListAdapter() {
+        mWordListAdapter = new WordListAdapter(MainActivity.this);
+        mWordListAdapter.updateItems(mWordItems);
+        wordListFragment.setListAdapter(mWordListAdapter);
+        wordListFragment.getListView().setRecyclerListener(mWordListAdapter);
     }
 
     private void populateScoreCard() {
@@ -114,17 +111,18 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
 
     @Override
     public void onFragmentViewCreated(final ListFragment fragment) {
-        fragment.setListAdapter(mWordListAdapter);
-        fragment.getListView().setRecyclerListener(mWordListAdapter);
+        loadWordTranslator();
+    }
+
+    @Override
+    public void onFragmentDetached(WordListFragment fragment) {
+
     }
 
     @Override
     public void onFragmentAttached(WordListFragment fragment) {
         wordListFragment = fragment;
-    }
 
-    @Override
-    public void onFragmentDetached(WordListFragment fragment) {
     }
 
     @Override

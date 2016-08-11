@@ -11,10 +11,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsNot.not;
 
 
 /**
@@ -52,16 +57,27 @@ public class MainActivityTest {
 
     @Test
     public void checkPreconditions() {
-        // Check the fragment exists
+        // Check fragments exists
         assertNotNull(mActivityRule.getActivity().getFragmentManager().findFragmentById(R.id.description_fragment));
 
-        assertNotNull(mActivityRule.getActivity().getFragmentManager().findFragmentByTag(MainActivity.WORD_LIST_TAG));
+        assertNotNull(mActivityRule.getActivity().getFragmentManager().findFragmentById(R.id.word_list_fragment));
 
         WordListFragment wordListFragment = (WordListFragment) mActivityRule.getActivity()
-                .getFragmentManager().findFragmentByTag(MainActivity.WORD_LIST_TAG);
+                .getFragmentManager().findFragmentById(R.id.word_list_fragment);
 
         ViewMatchers.assertThat("The list fragment model should be an instance of WordItem",
                 wordListFragment.getListView().getSelectedItem(), instanceOf(WordItem.class));
+    }
+
+
+    @Test
+    public void descriptionFragmentGameSection_IsNotVisible() {
+        onView(withId(R.id.game_container)).check(matches(not(isDisplayed())));
+    }
+
+    @Test
+    public void descriptionFragmentResultSection_IsNotVisible() {
+        onView(withId(R.id.result_container)).check(matches(not(isDisplayed())));
     }
 
 }
