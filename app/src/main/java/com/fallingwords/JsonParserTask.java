@@ -56,6 +56,9 @@ public class JsonParserTask<T> extends AsyncTask<Void, Void, List<T>> {
 //        if (mJsonString == null) {
 //            throw new JsonCreatorTaskException("Base json string not set");
 //        }
+        if (isCancelled()) {
+            return null;
+        }
 
         return (List<T>) parseWordsJsonStringToObject();
     }
@@ -82,7 +85,7 @@ public class JsonParserTask<T> extends AsyncTask<Void, Void, List<T>> {
             int max = words.size() - 1;
             Random sRandom = new Random();
             for (WordItem word : words) {
-                //set wrong falling translation word in every odd number in order to make game more crazy
+                //set wrong falling translation word in every odd number in order to make game little crazy
                 if (position % 2 == 1) {
                     //generate random number in specific range
                     int randomPosition = sRandom.nextInt(max - min + 1) + min;
@@ -97,9 +100,9 @@ public class JsonParserTask<T> extends AsyncTask<Void, Void, List<T>> {
             }
 
         } catch (IOException ex) {
-            Log.e(TAG, "*** ERROR DURING BOOT WORD! Problem in bootwords data?", ex);
+            Log.e(TAG, "*** ERROR DURING BOOT WORD! Problem in boot words data?", ex);
         } catch (Exception e) {
-            Log.e(TAG, "*** ERROR DURING BOOT WORD! Problem in bootwords data?", e);
+            Log.e(TAG, "*** ERROR DURING BOOT WORD! Problem in boot words data?", e);
         }
         return words;
     }

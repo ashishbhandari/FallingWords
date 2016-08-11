@@ -1,82 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white">
+                xmlns:fab="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white">
 
-
-    <FrameLayout
-        android:id="@+id/welcome_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <Button
-            android:id="@+id/button_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Start" />
-
-    </FrameLayout>
 
     <RelativeLayout
-        android:id="@+id/game_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible">
+            android:id="@+id/welcome_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/falling_word_trans"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Spanish translated word!"
-            android:textColor="@android:color/black" />
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/game_description"
+                android:textAppearance="@style/TextAppearance.Title"
+                android:ellipsize="end"
+                android:layout_centerInParent="true"/>
+
+        <Button
+                android:id="@+id/button_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_below="@id/description"
+                android:text="Start"
+                android:layout_marginTop="@dimen/spacing_normal"
+                android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:id="@+id/game_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible">
 
         <TextView
-            android:id="@+id/word"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:gravity="center"
-            android:text="This is where each individual word will appear"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/black" />
+                android:id="@+id/falling_word_trans"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Spanish translated word!"
+                android:textColor="@android:color/black"/>
+
+        <TextView
+                android:id="@+id/word"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:gravity="center"
+                android:text="This is where each individual word will appear"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"/>
 
 
         <com.getbase.floatingactionbutton.FloatingActionsMenu
-            android:id="@+id/multiple_actions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            fab:fab_addButtonColorNormal="@color/white"
-            fab:fab_addButtonColorPressed="@color/white_pressed"
-            fab:fab_addButtonPlusIconColor="@color/half_black"
-            fab:fab_labelStyle="@style/menu_labels_style">
-
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/action_a"
+                android:id="@+id/multiple_actions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_icon="@android:drawable/ic_menu_help"
-                fab:fab_colorNormal="@color/white"
-                fab:fab_colorPressed="@color/white_pressed" />
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/padding_normal"
+                android:layout_marginEnd="@dimen/padding_normal"
+                android:layout_marginRight="@dimen/padding_normal"
+                fab:fab_addButtonColorNormal="@color/white"
+                fab:fab_addButtonColorPressed="@color/white_pressed"
+                fab:fab_addButtonPlusIconColor="@color/half_black"
+                fab:fab_labelStyle="@style/menu_labels_style">
 
             <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/action_b"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/white"
-                fab:fab_colorPressed="@color/white_pressed" />
+                    android:id="@+id/action_a"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_icon="@android:drawable/ic_menu_help"
+                    fab:fab_colorNormal="@color/white"
+                    fab:fab_colorPressed="@color/white_pressed"/>
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/action_b"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/white"
+                    fab:fab_colorPressed="@color/white_pressed"/>
 
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
@@ -84,40 +96,40 @@
 
 
     <LinearLayout
-        android:id="@+id/result_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="invisible">
+            android:id="@+id/result_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="invisible">
 
         <TextView
-            android:id="@+id/ques_word"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Spanish translated word!"
-            android:textColor="@android:color/black" />
+                android:id="@+id/ques_word"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Spanish translated word!"
+                android:textColor="@android:color/black"/>
 
         <TextView
-            android:id="@+id/option_present"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Spanish translated word!"
-            android:textColor="@android:color/black" />
+                android:id="@+id/option_present"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Spanish translated word!"
+                android:textColor="@android:color/black"/>
 
         <TextView
-            android:id="@+id/actual_answer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Spanish translated word!"
-            android:textColor="@android:color/black" />
+                android:id="@+id/actual_answer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Spanish translated word!"
+                android:textColor="@android:color/black"/>
 
         <TextView
-            android:id="@+id/status_answer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Spanish translated word!"
-            android:textColor="@android:color/black" />
+                android:id="@+id/status_answer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Spanish translated word!"
+                android:textColor="@android:color/black"/>
 
     </LinearLayout>
 

@@ -3,6 +3,12 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <!-- standard metrics -->
+    <dimen name="spacing_normal">8dp</dimen>
+    <dimen name="spacing_micro">4dp</dimen>
+    <dimen name="padding_normal">16dp</dimen>
+
+
     <dimen name="word_icon_size">24dp</dimen>
     <dimen name="word_icon_horizontal_padding">24dp</dimen> <!-- center 24dp in @keyline_2 -->
 

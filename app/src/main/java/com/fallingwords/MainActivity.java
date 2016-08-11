@@ -1,11 +1,13 @@
 package com.fallingwords;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +16,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import android.widget.Toast;
+import com.fallingwords.util.AnimationListenerAdapter;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import java.util.List;
@@ -25,6 +29,7 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    public final static String WORD_LIST_TAG = "Word_List";
 
     protected static final int WORD_ITEM_INIT_STATE = 0;
 
@@ -38,24 +43,23 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
 
     private WordListAdapter mWordListAdapter;
 
-    private WordListFragment mWordListFragment;
+    private WordListFragment wordListFragment;
     private DescriptionFragment descriptionFragment;
 
-    private List<WordItem> wordItems;
+    private List<WordItem> mWordItems;
 
     private TextView mVersionDescriptionTextView;
-    private TextView fallingWordTrans;
-    private FloatingActionsMenu floatingIcon;
+    private TextView mFallingWordTranslation;
+    private FloatingActionsMenu mFloatingIcon;
 
     private int mCurrentPosition = -1;
 
-    private ObjectAnimator objectAnimatorWordTrans;
+    private ObjectAnimator objectFallingAnimator;
 
     private JsonParserTask<WordItem> mJsonParserTask;
 
     private TextView scoreCard;
     private TextView gameStatus;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,35 +69,47 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
         scoreCard = (TextView) findViewById(R.id.score_card_label);
         gameStatus = (TextView) findViewById(R.id.game_over_status);
 
+        loadWordTranslator();
+
+    }
+
+    private void loadWordTranslator() {
         mJsonParserTask = new JsonParserTask<>(this);
         mJsonParserTask.setJsonParserListener(new JsonParserTask.OnDataListener() {
             @Override
             public void onDecode(JsonParserTask task, List output) {
                 Log.e(TAG, "result");
-                wordItems = output;
+                mWordItems = output;
 
-                WordSession session = WordGameHolder.getInstance().getSession();
-                session.setTotalQuestions(wordItems.size());
+                if (mWordItems != null && mWordItems.size() > 0) {
+                    WordSession session = WordGameHolder.getInstance().getSession();
+                    session.setTotalQuestions(mWordItems.size());
 
-                WordListFragment frag = new WordListFragment();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.add(R.id.list_container, frag);
-                transaction.commit();
+                    WordListFragment frag = new WordListFragment();
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.add(R.id.list_container, frag);
+//                    transaction.addToBackStack(WORD_LIST_TAG);
+                    transaction.commit();
 
-                mWordListAdapter = new WordListAdapter(MainActivity.this);
-                mWordListAdapter.updateItems(wordItems);
-                populateScoreCard();
+                    mWordListAdapter = new WordListAdapter(MainActivity.this);
+                    mWordListAdapter.updateItems(mWordItems);
+                    populateScoreCard();
+                } else {
+                    Toast.makeText(getApplicationContext(), getString(R.string.no_data_available), Toast.LENGTH_LONG).show();
+                    finish();
+                }
             }
         }).overlay();
-
     }
 
     private void populateScoreCard() {
         WordSession session = WordGameHolder.getInstance().getSession();
         if (WordGameHolder.getInstance().isGameOver()) {
-            gameStatus.setText("Game Over");
+            gameStatus.setText(getString(R.string.game_over));
+        } else {
+            gameStatus.setText(getString(R.string.game_on));
         }
-        scoreCard.setText(session.getTotalAttempts() + "/" + session.getTotalQuestions() + " correct : " + session.getCorrectAttempts());
+        scoreCard.setText("Attempts " + session.getTotalAttempts() + "/" + session.getTotalQuestions() + "  correct : " + session.getCorrectAttempts());
     }
 
     @Override
@@ -104,7 +120,7 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
 
     @Override
     public void onFragmentAttached(WordListFragment fragment) {
-        mWordListFragment = fragment;
+        wordListFragment = fragment;
     }
 
     @Override
@@ -119,7 +135,7 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
 
         // if any question status is goingOn, don't allow to user to click on any other list item
         if (mCurrentPosition != -1) {
-            if (wordItems.get(mCurrentPosition).isGoingOn) {
+            if (mWordItems.get(mCurrentPosition).isGoingOn) {
                 return;
             }
         }
@@ -128,7 +144,7 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
 //        DescriptionFragment descriptionFragment = (DescriptionFragment) getFragmentManager()
 //                .findFragmentById(R.id.description_fragment);
 
-        if (wordItems.get(position).isAttempted) {
+        if (mWordItems.get(position).isAttempted) {
             // show resulted color either right or wrong
             // and show the result of this question on result screen
 
@@ -139,18 +155,16 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
 
             // show animation on detail screen and after completion make it attempted true
             // and isGoingOn false and refresh list view
-            wordItems.get(position).isGoingOn = true;
+            mWordItems.get(position).isGoingOn = true;
             mWordListAdapter.forceUpdate();
 
             showDescriptionScreenStatus(WORD_ITEM_PROGRESS_STATE);
         }
-
     }
 
-
     @Override
-    public void onFragmentViewCreated(DescriptionFragment fragment) {
-        this.descriptionFragment = fragment;
+    public void onFragmentViewCreated(DescriptionFragment mDescriptionFragment) {
+        this.descriptionFragment = mDescriptionFragment;
 
         showDescriptionScreenStatus(WORD_ITEM_INIT_STATE);
     }
@@ -180,7 +194,7 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
             view.findViewById(R.id.game_container).setVisibility(View.INVISIBLE);
             view.findViewById(R.id.result_container).setVisibility(View.VISIBLE);
 
-            WordItem wordItem = wordItems.get(mCurrentPosition);
+            WordItem wordItem = mWordItems.get(mCurrentPosition);
 
             ((TextView) view.findViewById(R.id.ques_word)).setText(wordItem.text_eng);
             ((TextView) view.findViewById(R.id.option_present)).setText("Spanish Conversion : " + wordItem.fallingTranslationWord);
@@ -212,10 +226,10 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
             });
 
             mVersionDescriptionTextView = (TextView) view.findViewById(R.id.word);
-            fallingWordTrans = (TextView) view.findViewById(R.id.falling_word_trans);
+            mFallingWordTranslation = (TextView) view.findViewById(R.id.falling_word_trans);
 
-            floatingIcon = (FloatingActionsMenu) view.findViewById(R.id.multiple_actions);
-            floatingIcon.setEnabled(false);
+            mFloatingIcon = (FloatingActionsMenu) view.findViewById(R.id.multiple_actions);
+            mFloatingIcon.setEnabled(false);
 
             view.findViewById(R.id.action_a).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -234,10 +248,9 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
 
 
     private void answerSelectedByUser(boolean userOptedAnswer) {
-        wordItems.get(mCurrentPosition).userOptedAnswer = userOptedAnswer;
-
+        mWordItems.get(mCurrentPosition).userOptedAnswer = userOptedAnswer;
         //disable animation and finish this question asap
-        objectAnimatorWordTrans.cancel();// this method must called onAnimationEnd() callback of ObjectAnimator class
+        stopFallingAnimation();
     }
 
     public void calculateResultStatus() {
@@ -245,26 +258,26 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
          * Case 1: When question will be end without getting any input from user,
          * if no Input will be press by user userOptedAnswer should be null so handle it accordingly
          */
-        Boolean userOptedAnswer = wordItems.get(mCurrentPosition).userOptedAnswer;
+        Boolean userOptedAnswer = mWordItems.get(mCurrentPosition).userOptedAnswer;
 
         if (userOptedAnswer != null) {
-            if (userOptedAnswer == wordItems.get(mCurrentPosition).answerOfThisQues) {
+            if (userOptedAnswer == mWordItems.get(mCurrentPosition).answerOfThisQues) {
                 // user answer is correct
                 // display result of this screen
-                wordItems.get(mCurrentPosition).isCorrect = true;
+                mWordItems.get(mCurrentPosition).isCorrect = true;
             } else {
                 // user answer is wrong
                 // display result of this screen
-                wordItems.get(mCurrentPosition).isCorrect = false;
+                mWordItems.get(mCurrentPosition).isCorrect = false;
             }
         } else {
             // read case study again and analyse how to handle this case
-            wordItems.get(mCurrentPosition).isCorrect = false;
+            mWordItems.get(mCurrentPosition).isCorrect = false;
         }
 
         mWordListAdapter.forceUpdate();
 
-        WordGameHolder.getInstance().validateAttempt((wordItems.get(mCurrentPosition).isCorrect ? true : false));
+        WordGameHolder.getInstance().validateAttempt((mWordItems.get(mCurrentPosition).isCorrect ? true : false));
         checkForGameOver();
         // show result status on the screen with correct output and user input
         // keep floating icon menu at disable state
@@ -286,8 +299,8 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
      * @param questionIndex
      */
     private void activateQuestion(int questionIndex) {
-        if (mWordListFragment != null) {
-            ListView mList = mWordListFragment.getListView();
+        if (wordListFragment != null) {
+            ListView mList = wordListFragment.getListView();
             mList.performItemClick(
                     mList.getAdapter().getView(questionIndex, null, null),
                     questionIndex,
@@ -304,11 +317,11 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
             view.findViewById(R.id.result_container).setVisibility(View.INVISIBLE);
             view.findViewById(R.id.game_container).setVisibility(View.VISIBLE);
 
-            floatingIcon.collapse();
+            mFloatingIcon.collapse();
 
-            mVersionDescriptionTextView.setText(wordItems.get(mCurrentPosition).text_eng);
-            fallingWordTrans.setText(wordItems.get(mCurrentPosition).fallingTranslationWord);
-            fallingWordTrans.setVisibility(View.INVISIBLE);
+            mVersionDescriptionTextView.setText(mWordItems.get(mCurrentPosition).text_eng);
+            mFallingWordTranslation.setText(mWordItems.get(mCurrentPosition).fallingTranslationWord);
+            mFallingWordTranslation.setVisibility(View.INVISIBLE);
 
             startFallingWordAnimation(mCurrentPosition);
         }
@@ -316,65 +329,56 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
     }
 
     private void startFallingWordAnimation(final int position) {
-        int yValue = descriptionFragment.getView().getBottom() - fallingWordTrans.getHeight();
+        int yValue = descriptionFragment.getView().getBottom() - mFallingWordTranslation.getHeight();
 
-        objectAnimatorWordTrans = ObjectAnimator.ofFloat(fallingWordTrans, View.TRANSLATION_Y, 0, yValue).setDuration(7000);
-        objectAnimatorWordTrans.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                Log.e(TAG, "animation.getAnimatedValue() : " + animation.getAnimatedValue());
-            }
-        });
+        stopFallingAnimation();
+        objectFallingAnimator = ObjectAnimator.ofFloat(mFallingWordTranslation, View.TRANSLATION_Y, 0, yValue).setDuration(7000);
 
-        objectAnimatorWordTrans.addListener(new Animator.AnimatorListener() {
-
+        objectFallingAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                floatingIcon.expand();
-                fallingWordTrans.setVisibility(View.VISIBLE);
+                mFloatingIcon.expand();
+                mFallingWordTranslation.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                floatingIcon.collapse();
-                wordItems.get(position).isGoingOn = false;
-                wordItems.get(position).isAttempted = true;
+                mFloatingIcon.collapse();
+                mWordItems.get(position).isGoingOn = false;
+                mWordItems.get(position).isAttempted = true;
 
                 calculateResultStatus();
-                fallingWordTrans.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
+                mFallingWordTranslation.setVisibility(View.INVISIBLE);
             }
         });
 
         Animation animationFadeIn = AnimationUtils.loadAnimation(MainActivity.this, R.anim.view_fade_in);
         mVersionDescriptionTextView.startAnimation(animationFadeIn);
-        animationFadeIn.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
+        animationFadeIn.setAnimationListener(new AnimationListenerAdapter() {
             @Override
             public void onAnimationEnd(Animation animation) {
-                Log.e(TAG, "Animation end here");
-                objectAnimatorWordTrans.start();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
+                startFallingAnimation();
             }
         });
     }
 
+    private void startFallingAnimation() {
+        if (objectFallingAnimator != null) {
+            objectFallingAnimator.start();
+        }
+    }
 
+    private void stopFallingAnimation() {
+        if (objectFallingAnimator != null) {
+            objectFallingAnimator.cancel();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mJsonParserTask != null && mJsonParserTask.getStatus() != AsyncTask.Status.FINISHED)
+            mJsonParserTask.cancel(true);
+
+    }
 }

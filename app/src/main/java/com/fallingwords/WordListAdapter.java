@@ -34,7 +34,7 @@ public class WordListAdapter implements ListAdapter, AbsListView.RecyclerListene
 
 
     private final int mIconColorDefault;
-    private final int mIconColorProgressign;
+    private final int mIconColorProgressing;
     private final int mIconColorCorrect;
     private final int mIconColorWrong;
 
@@ -42,7 +42,7 @@ public class WordListAdapter implements ListAdapter, AbsListView.RecyclerListene
         mContext = context;
         Resources resources = context.getResources();
         mIconColorDefault = resources.getColor(R.color.word_item_icon_default);
-        mIconColorProgressign = resources.getColor(R.color.word_item_icon_progressing);
+        mIconColorProgressing = resources.getColor(R.color.word_item_icon_progressing);
         mIconColorCorrect = resources.getColor(R.color.word_item_icon_correct);
         mIconColorWrong = resources.getColor(R.color.word_item_icon_wrong);
     }
@@ -117,16 +117,13 @@ public class WordListAdapter implements ListAdapter, AbsListView.RecyclerListene
                 holder.icon.setBackgroundColor(mIconColorWrong);
             }
         } else {
-
             if (item.isGoingOn) {
-                holder.icon.setBackgroundColor(mIconColorProgressign);
+                holder.icon.setBackgroundColor(mIconColorProgressing);
             } else {
                 holder.icon.setBackgroundColor(mIconColorDefault);
             }
-//            holder.icon.setColorFilter(mIconColorDefault);
         }
 
-//        Log.e(TAG, "Item value : " + item.word);
         return view;
     }
 
