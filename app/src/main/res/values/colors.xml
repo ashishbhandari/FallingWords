@@ -13,6 +13,12 @@
 
     <color name="title_color">#de07434d</color>
 
+    <color name="green">#54cc24</color>
+    <color name="green_pressed">#93ff66</color>
+
+    <color name="red">#f41a1a</color>
+    <color name="red_pressed">#fcabab</color>
+
     <color name="white">#fafafa</color>
     <color name="white_pressed">#f1f1f1</color>
     <color name="half_black">#808080</color>

@@ -17,8 +17,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/game_description"
-                android:textAppearance="@style/TextAppearance.Title"
-                android:ellipsize="end"
+                android:textColor="@android:color/black"
                 android:layout_centerInParent="true"/>
 
         <Button
@@ -37,7 +36,7 @@
             android:id="@+id/game_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
+            android:visibility="invisible">
 
         <TextView
                 android:id="@+id/falling_word_trans"
@@ -79,16 +78,17 @@
                     android:id="@+id/action_a"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    fab:fab_icon="@android:drawable/ic_menu_help"
-                    fab:fab_colorNormal="@color/white"
-                    fab:fab_colorPressed="@color/white_pressed"/>
+                    fab:fab_icon="@drawable/ic_action_done"
+                    fab:fab_colorNormal="@color/green"
+                    fab:fab_colorPressed="@color/green_pressed"/>
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                     android:id="@+id/action_b"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    fab:fab_colorNormal="@color/white"
-                    fab:fab_colorPressed="@color/white_pressed"/>
+                    fab:fab_icon="@drawable/ic_action_cancel"
+                    fab:fab_colorNormal="@color/red"
+                    fab:fab_colorPressed="@color/red_pressed"/>
 
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
@@ -101,7 +101,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="invisible">
 
         <TextView
                 android:id="@+id/ques_word"
