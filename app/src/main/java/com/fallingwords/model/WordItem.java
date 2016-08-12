@@ -4,7 +4,7 @@ package com.fallingwords.model;
  * Created by b_ashish on 07-Aug-16.
  */
 
-public class WordItem extends Word {
+public abstract class WordItem {
 
     public String fallingTranslationWord;
     public boolean answerOfThisQues;

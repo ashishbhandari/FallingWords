@@ -3,9 +3,7 @@ package com.fallingwords.util;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.fallingwords.R;
-import com.fallingwords.model.WordItem;
+import com.fallingwords.model.SpaWord;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -24,7 +22,7 @@ public class JsonParserTask<T> extends AsyncTask<Void, Void, List<T>> {
     private static final String TAG = JsonParserTask.class.getSimpleName();
 
     private final Context mContext;
-    private String mJsonString;
+    private int mJsonResource;
     private OnDataListener mDataListener;
 
     public interface OnDataListener {
@@ -36,8 +34,8 @@ public class JsonParserTask<T> extends AsyncTask<Void, Void, List<T>> {
         this.mContext = mContext;
     }
 
-    public JsonParserTask setJson(String mJsonString) {
-        this.mJsonString = mJsonString;
+    public JsonParserTask setJson(int mJsonResource) {
+        this.mJsonResource = mJsonResource;
         return this;
     }
 
@@ -54,14 +52,17 @@ public class JsonParserTask<T> extends AsyncTask<Void, Void, List<T>> {
     @Override
     protected List<T> doInBackground(Void... voids) {
 
-//        if (mJsonString == null) {
-//            throw new JsonCreatorTaskException("Base json string not set");
-//        }
+        if (mJsonResource <= 0) {
+            throw new JsonCreatorTaskException("Word json resource not set");
+        }
+
         if (isCancelled()) {
             return null;
         }
-
-        return (List<T>) parseWordsJsonStringToObject();
+        /**
+         * can be use switch case if another conversion available
+         */
+        return (List<T>) parseSpanishWordsJsonStringToObjects();
     }
 
     @Override
@@ -71,26 +72,27 @@ public class JsonParserTask<T> extends AsyncTask<Void, Void, List<T>> {
         }
     }
 
-    private List<WordItem> parseWordsJsonStringToObject() {
-        List<WordItem> words = new ArrayList<>();
+    private List<SpaWord> parseSpanishWordsJsonStringToObjects() {
+        List<SpaWord> words = new ArrayList<>();
 
         Log.d(TAG, "Starting data boot words process.");
         // Load data from word raw resource words.json inside raw directory
         try {
-            String bootWordsJson = JSONHandler.parseResource(mContext, R.raw.words);
+            String bootWordsJson = JSONHandler.parseResource(mContext, mJsonResource);
 
-            words = stringToArray(bootWordsJson, WordItem[].class);
+            words = stringToArray(bootWordsJson, SpaWord[].class);
 
             int position = 0;
             int min = 0;
             int max = words.size() - 1;
+            
             Random sRandom = new Random();
-            for (WordItem word : words) {
+            for (SpaWord word : words) {
                 //set wrong falling translation word in every odd number in order to make game little crazy
                 if (position % 2 == 1) {
                     //generate random number in specific range
                     int randomPosition = sRandom.nextInt(max - min + 1) + min;
-                    // pick randomly wrong translation word from words array
+                    // pick randomly wrong translation word from available words array
                     word.fallingTranslationWord = words.get(randomPosition).text_spa;
                     word.answerOfThisQues = false;
                 } else {

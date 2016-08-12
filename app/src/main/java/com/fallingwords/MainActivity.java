@@ -13,8 +13,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import android.widget.Toast;
+import com.fallingwords.model.SpaWord;
 import com.fallingwords.model.WordItem;
 import com.fallingwords.util.AnimationListenerAdapter;
 import com.fallingwords.util.JsonParserTask;
@@ -40,6 +40,8 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
     private static final int FALLING_WORD_DURATION = 7000;
 
     private boolean mGameStarted = false;
+
+    private boolean mGameSafeExit = false;
 
     private WordListAdapter mWordListAdapter;
 
@@ -72,7 +74,7 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
     }
 
     private void loadWordTranslator() {
-        mJsonParserTask = new JsonParserTask<>(this);
+        mJsonParserTask = new JsonParserTask<>(this).setJson(R.raw.words);
         mJsonParserTask.setJsonParserListener(new JsonParserTask.OnDataListener() {
             @Override
             public void onDecode(JsonParserTask task, List output) {
@@ -193,13 +195,19 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
 
             WordItem wordItem = mWordItems.get(mCurrentPosition);
 
-            ((TextView) view.findViewById(R.id.ques_word)).setText(wordItem.text_eng);
-            ((TextView) view.findViewById(R.id.option_present)).setText("Falling word : " + wordItem.fallingTranslationWord);
-            ((TextView) view.findViewById(R.id.actual_answer)).setText("\nCorrect Spanish conversion is : " + wordItem.text_spa);
-            ((TextView) view.findViewById(R.id.status_answer)).setText("Your answer is " + (wordItem.isCorrect ? "Correct" : "Wrong"));
+            showSpanishConversionResult(view, (SpaWord) wordItem);
 
             populateScoreCard();
         }
+    }
+
+    private void showSpanishConversionResult(View view, SpaWord spanishWord) {
+
+        ((TextView) view.findViewById(R.id.ques_word)).setText(spanishWord.text_eng);
+        ((TextView) view.findViewById(R.id.option_present)).setText("Falling word : " + spanishWord.fallingTranslationWord);
+        ((TextView) view.findViewById(R.id.actual_answer)).setText("\nCorrect Spanish conversion is : " + spanishWord.text_spa);
+        ((TextView) view.findViewById(R.id.status_answer)).setText("Your answer is " + (spanishWord.isCorrect ? "Correct" : "Wrong"));
+
     }
 
 
@@ -312,19 +320,24 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
             view.findViewById(R.id.welcome_container).setVisibility(View.INVISIBLE);
             view.findViewById(R.id.result_container).setVisibility(View.INVISIBLE);
             view.findViewById(R.id.game_container).setVisibility(View.VISIBLE);
-
             mFloatingIcon.collapse();
 
-            mVersionDescriptionTextView.setText(mWordItems.get(mCurrentPosition).text_eng);
-            mFallingWordTranslation.setText(mWordItems.get(mCurrentPosition).fallingTranslationWord);
-            mFallingWordTranslation.setVisibility(View.INVISIBLE);
+            showSpanishWordQuestionnaire();
 
-            startFallingWordAnimation(mCurrentPosition);
+            startFallingWordAnimation();
         }
-
     }
 
-    private void startFallingWordAnimation(final int position) {
+    private void showSpanishWordQuestionnaire() {
+        SpaWord spanishWord = (SpaWord) mWordItems.get(mCurrentPosition);
+
+        mVersionDescriptionTextView.setText(spanishWord.text_eng);
+        mFallingWordTranslation.setText(mWordItems.get(mCurrentPosition).fallingTranslationWord);
+        mFallingWordTranslation.setVisibility(View.INVISIBLE);
+    }
+
+
+    private void startFallingWordAnimation() {
 
         int yValueStart = 0;
         int yValueEnd = descriptionFragment.getView().getBottom() - mFallingWordTranslation.getHeight();
@@ -342,9 +355,13 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
 
             @Override
             public void onAnimationEnd(Animator animation) {
+                Log.e(TAG, "Inside OnAnimation end.................");
+                if (mGameSafeExit) {
+                    return;
+                }
                 mFloatingIcon.collapse();
-                mWordItems.get(position).isGoingOn = false;
-                mWordItems.get(position).isAttempted = true;
+                mWordItems.get(mCurrentPosition).isGoingOn = false;
+                mWordItems.get(mCurrentPosition).isAttempted = true;
 
                 calculateResultStatus();
                 mFallingWordTranslation.setVisibility(View.INVISIBLE);
@@ -376,9 +393,11 @@ public class MainActivity extends Activity implements WordListFragment.Listener,
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // safely release running resources
+        mGameSafeExit = true;
+        stopFallingAnimation();
         if (mJsonParserTask != null && mJsonParserTask.getStatus() != AsyncTask.Status.FINISHED) {
             mJsonParserTask.cancel(true);
         }
-
     }
 }
