@@ -18,7 +18,7 @@ import java.util.List;
 
 
 /**
- * Created by Ashish Bhandari on 07-Aug-16.
+ * Created by b_ashish on 07-Aug-16.
  */
 
 public class WordListAdapter implements ListAdapter, AbsListView.RecyclerListener {

@@ -75,7 +75,7 @@ public class JsonParserTask<T> extends AsyncTask<Void, Void, List<T>> {
         List<WordItem> words = new ArrayList<>();
 
         Log.d(TAG, "Starting data boot words process.");
-        // Load data from word raw resource.
+        // Load data from word raw resource words.json inside raw directory
         try {
             String bootWordsJson = JSONHandler.parseResource(mContext, R.raw.words);
 
@@ -110,6 +110,6 @@ public class JsonParserTask<T> extends AsyncTask<Void, Void, List<T>> {
 
     public static <T> List<T> stringToArray(String s, Class<T[]> clazz) {
         T[] arr = new Gson().fromJson(s, clazz);
-        return Arrays.asList(arr); //or return Arrays.asList(new Gson().fromJson(s, clazz)); for a one-liner
+        return Arrays.asList(arr);
     }
 }

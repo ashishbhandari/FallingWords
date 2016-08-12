@@ -22,7 +22,7 @@ import static org.hamcrest.core.IsNot.not;
 
 
 /**
- * Created by ashish on 10/08/16.
+ * Created by b_ashish on 10/08/16.
  */
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {

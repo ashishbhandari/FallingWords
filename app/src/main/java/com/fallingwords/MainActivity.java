@@ -23,7 +23,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import java.util.List;
 
 /**
- * Created by Ashish Bhandari on 07-Aug-16.
+ * Created by b_ashish on 07-Aug-16.
  */
 public class MainActivity extends Activity implements WordListFragment.Listener, DescriptionFragment.Listener {
 

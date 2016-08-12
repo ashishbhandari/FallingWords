@@ -1,7 +1,7 @@
 package com.fallingwords.model;
 
 /**
- * Created by Ashish Bhandari on 07-Aug-16.
+ * Created by b_ashish on 07-Aug-16.
  */
 
 public class WordItem extends Word {

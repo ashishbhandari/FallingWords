@@ -10,6 +10,6 @@
 
 
     <dimen name="word_icon_size">24dp</dimen>
-    <dimen name="word_icon_horizontal_padding">24dp</dimen> <!-- center 24dp in @keyline_2 -->
+    <dimen name="word_icon_horizontal_padding">24dp</dimen>
 
 </resources>
