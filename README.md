@@ -20,11 +20,9 @@ https://github.com/futuresimple/android-floating-action-button/blob/master/READM
 
 Explanation:
 
-Falling word game case study provided by babbel
+Falling word game case study
 
 All third parties library licenses are mentioned in licenses.html file inside assets directory of a project.
-
-And of course without crash :)
 
 
 Assumptions:
